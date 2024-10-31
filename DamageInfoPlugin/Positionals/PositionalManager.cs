@@ -9,6 +9,7 @@ namespace DamageInfoPlugin.Positionals;
 public class PositionalManager
 {
     private const string SheetUrl = "https://docs.google.com/spreadsheets/d/1UchGyajO-AG6gQwXQT1bsb3sh2ucwOU_vuqT8FRR8Ac/gviz/tq?tqx=out:csv&sheet=main1";
+    private const string SheetUrlCN = "https://s3.ffxiv.wang/xlassets/pluginfiles/DamageInfo.csv";
     private readonly string _filePath = Path.Combine(DalamudApi.PluginInterface.AssemblyLocation.DirectoryName!, "positionals.csv");
     
     private readonly HttpClient _client;
@@ -30,7 +31,8 @@ public class PositionalManager
 
     private void Get()
     {
-        var text = _client.GetAsync(SheetUrl).Result.Content.ReadAsStringAsync().Result;
+        var url = (uint)DalamudApi.ClientState.ClientLanguage == 4 ? SheetUrlCN : SheetUrl;
+        var text = _client.GetAsync(url).Result.Content.ReadAsStringAsync().Result;
         if (!File.Exists(_filePath) || File.ReadAllText(_filePath) != text)
         {
             File.WriteAllText(_filePath, text);
